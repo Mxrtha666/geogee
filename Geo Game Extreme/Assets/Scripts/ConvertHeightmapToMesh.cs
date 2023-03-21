@@ -33,21 +33,10 @@ public class ConvertHeightmapToMesh : MonoBehaviour
 
             // Calculate latitude and longtitude for each vertex
             float latitude = Vector3.Angle(Vector3.up, vertex);
-
-            float angle = Vector3.Angle(new Vector2(1f, 0f), new Vector2(vertex.x, vertex.z));
-
-            if (vertex.z < 0)
-            {
-                angle = 360 - angle;
-            }
-
-            float longitude = angle / 360;
-            //print(new Vector2(vertex.x, vertex.z));
-            //print(longitude);
-            //print(angle);
-            //print(hMap.width * longitude);
-
-            float height = hMap.GetPixelBilinear(longitude, latitude / 180).r;
+            float longitude = Vector3.SignedAngle(Vector3.right, vertex, Vector3.up);
+            longitude = (longitude + 360) % 360;
+            
+            float height = hMap.GetPixelBilinear(longitude / 360, latitude / 180).r;
 
             // Apply heightmap position to existing vertex
             vertex *= 1 + maxHeight * height;
