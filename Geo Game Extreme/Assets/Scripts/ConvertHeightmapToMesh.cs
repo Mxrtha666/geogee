@@ -9,6 +9,8 @@ public class ConvertHeightmapToMesh : MonoBehaviour
     private Vector3[] normals; // cube sphere normals
     private Color32[] cubeUV; // currently displays red green blue colors to help differentiate faces
     public Texture2D hMap; // HeightMap received from input
+    public float longoff;
+    public float latoff;
     public float maxHeight;
 
     public MeshRenderer mr;
@@ -25,15 +27,27 @@ public class ConvertHeightmapToMesh : MonoBehaviour
         Vector3 vertex;
         for (int i = 0; i < vertices.Length; i++)
         {
-            // Get existing vertex from mesh vertices array
+            // Get existing vertex from mesh vertices array vertices.Length
             //print(i);
             vertex = vertices[i];
 
             // Calculate latitude and longtitude for each vertex
             float latitude = Vector3.Angle(Vector3.up, vertex);
-            float longitude = Vector3.SignedAngle(Vector3.right, vertex, Vector3.up);
-            longitude = (longitude + 360) % 360;
-            float height = hMap.GetPixelBilinear(longitude / 360, latitude / 180).r;
+
+            float angle = Vector3.Angle(new Vector2(1f, 0f), new Vector2(vertex.x, vertex.z));
+
+            if (vertex.z < 0)
+            {
+                angle = 360 - angle;
+            }
+
+            float longitude = angle / 360;
+            //print(new Vector2(vertex.x, vertex.z));
+            //print(longitude);
+            //print(angle);
+            //print(hMap.width * longitude);
+
+            float height = hMap.GetPixelBilinear(longitude, latitude / 180).r;
 
             // Apply heightmap position to existing vertex
             vertex *= 1 + maxHeight * height;
