@@ -4,12 +4,16 @@ using UnityEngine;
 
 public class Planet : MonoBehaviour
 {
-    [Range(2, 256)]
+    [Range(2, 1024)]
     public int resolution = 10;
 
     [SerializeField, HideInInspector]
     MeshFilter[] meshFilters;
     TerrainFace[] terrainFaces;
+    public Texture2D hMap;
+    public Texture2D ohMap;
+    public float amplitude;
+    public float tolerance;
 
     private void OnValidate()
     {
@@ -39,7 +43,7 @@ public class Planet : MonoBehaviour
                 meshFilters[i].sharedMesh = new Mesh();
             }
 
-            terrainFaces[i] = new TerrainFace(meshFilters[i].sharedMesh, resolution, directions[i]);
+            terrainFaces[i] = new TerrainFace(meshFilters[i].sharedMesh, resolution, directions[i], hMap, amplitude, ohMap, tolerance);
         }
     }
 

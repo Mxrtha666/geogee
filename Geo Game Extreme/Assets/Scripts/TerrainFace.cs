@@ -9,12 +9,19 @@ public class TerrainFace
     Vector3 localUp;
     Vector3 axisA;
     Vector3 axisB;
+    Texture2D hMap;
+    Texture2D ohMap;
+    float amplitude;
+    float tol;
 
-    public TerrainFace(Mesh mesh, int resolution, Vector3 localUp)
+    public TerrainFace(Mesh mesh, int resolution, Vector3 localUp, Texture2D hMap, float amplitude, Texture2D ohMap, float tol)
     {
         this.mesh = mesh;
         this.resolution = resolution;
         this.localUp = localUp;
+        this.hMap = hMap;
+        this.ohMap = ohMap;
+        this.amplitude = amplitude;
 
         axisA = new Vector3(localUp.y, localUp.z, localUp.x);
         axisB = Vector3.Cross(localUp, axisA);
@@ -22,6 +29,7 @@ public class TerrainFace
 
     public void ConstructMesh()
     {
+        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         Vector3[] vertices = new Vector3[resolution * resolution];
         int[] triangles = new int[(resolution - 1) * (resolution - 1) * 6];
         int triIndex = 0;
@@ -34,7 +42,26 @@ public class TerrainFace
                 Vector2 percent = new Vector2(x, y) / (resolution - 1);
                 Vector3 pointOnUnitCube = localUp + (percent.x - .5f) * 2 * axisA + (percent.y - .5f) * 2 * axisB;
                 Vector3 pointOnUnitSphere = Normalizee(pointOnUnitCube);
-                vertices[i] = pointOnUnitSphere * 10; // + pointOnUnitSphere * heightmap result;
+                Vector3 vertex = pointOnUnitSphere;
+
+                // Calculate latitude and longtitude for each vertex
+                float latitude = Vector3.Angle(Vector3.up, vertex);               
+                float angle = Vector3.Angle(new Vector2(1f, 0f), new Vector2(vertex.x, vertex.z));                
+                if (vertex.z < 0)
+                {
+                    angle = 360 - angle;
+                }                
+                float longitude = angle / 360;               
+                float height = hMap.GetPixelBilinear(longitude, latitude / 180).r;               
+                vertices[i] =  10 * pointOnUnitSphere * (1 + height * amplitude); // + pointOnUnitSphere * heightmap result;
+
+                //height = ohMap.GetPixelBilinear(longitude, latitude / 180).r;
+                //
+                //if (height > tol)
+                //{
+                //    // Apply heightmap position to existing vertex
+                //    vertices[i] = 10 * pointOnUnitSphere * (1 - (1 - height) * amplitude);
+                //}
 
                 if (x != resolution - 1 && y != resolution - 1)
                 {
