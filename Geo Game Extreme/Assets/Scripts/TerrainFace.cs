@@ -53,15 +53,20 @@ public class TerrainFace
                 }                
                 float longitude = angle / 360;               
                 float height = hMap.GetPixelBilinear(longitude, latitude / 180).r;               
-                vertices[i] =  10 * pointOnUnitSphere * (1 + height * amplitude); // + pointOnUnitSphere * heightmap result;
 
                 //height = ohMap.GetPixelBilinear(longitude, latitude / 180).r;
-                //
-                //if (height > tol)
-                //{
-                //    // Apply heightmap position to existing vertex
-                //    vertices[i] = 10 * pointOnUnitSphere * (1 - (1 - height) * amplitude);
-                //}
+                
+                if (height > tol)
+                {
+                    vertices[i] = 10 * pointOnUnitSphere * (1 + height * amplitude); // + pointOnUnitSphere * heightmap result;
+                    // Apply heightmap position to existing vertex
+                    
+                }
+                else
+                {
+                    height = ohMap.GetPixelBilinear(longitude, latitude / 180).r;
+                    vertices[i] = 10 * pointOnUnitSphere * (1 - (1 - height) * amplitude);
+                }
 
                 if (x != resolution - 1 && y != resolution - 1)
                 {
