@@ -33,6 +33,7 @@ public class TerrainFace
         Vector3[] vertices = new Vector3[resolution * resolution];
         int[] triangles = new int[(resolution - 1) * (resolution - 1) * 6];
         int triIndex = 0;
+        Vector2[] uvs = new Vector2[resolution * resolution]; ;
 
         for (int y = 0; y < resolution; y++)
         {
@@ -52,21 +53,23 @@ public class TerrainFace
                     angle = 360 - angle;
                 }                
                 float longitude = angle / 360;               
-                float height = hMap.GetPixelBilinear(longitude, latitude / 180).r;               
+                float height = hMap.GetPixelBilinear(longitude, latitude / 180).r;
+                uvs[i] = new Vector2(longitude, latitude);
 
+                vertices[i] = 10 * pointOnUnitSphere * (1 + height * amplitude);
                 //height = ohMap.GetPixelBilinear(longitude, latitude / 180).r;
-                
-                if (height > tol)
-                {
-                    vertices[i] = 10 * pointOnUnitSphere * (1 + height * amplitude); // + pointOnUnitSphere * heightmap result;
-                    // Apply heightmap position to existing vertex
-                    
-                }
-                else
-                {
-                    height = ohMap.GetPixelBilinear(longitude, latitude / 180).r;
-                    vertices[i] = 10 * pointOnUnitSphere * (1 - (1 - height) * amplitude);
-                }
+
+                //if (height > tol)
+                //{
+                //     // + pointOnUnitSphere * heightmap result;
+                //    // Apply heightmap position to existing vertex
+                //    
+                //}
+                //else
+                //{
+                //    height = ohMap.GetPixelBilinear(longitude, latitude / 180).r;
+                //    vertices[i] = 10 * pointOnUnitSphere * (1 - (1 - height) * amplitude);
+                //}
 
                 if (x != resolution - 1 && y != resolution - 1)
                 {
@@ -86,6 +89,7 @@ public class TerrainFace
         mesh.vertices = vertices;
         mesh.triangles = triangles;
         mesh.RecalculateNormals();
+        mesh.uv = uvs;
     }
 
     public Vector3 Normalizee(Vector3 p)
