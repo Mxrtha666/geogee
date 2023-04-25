@@ -404,7 +404,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06c5c7fb90ff7684eb07e43b06722965, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resolution: 4
+  resolution: 160
   meshFilters:
   - {fileID: 821384735}
   - {fileID: 689528738}
