@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Planet : MonoBehaviour
 {
-    [Range(2, 1024)]
-    public int resolution = 10;
+    //[Range(2, 1024)]
+    public int resolution = 444;
 
     [SerializeField, HideInInspector]
     MeshFilter[] meshFilters;

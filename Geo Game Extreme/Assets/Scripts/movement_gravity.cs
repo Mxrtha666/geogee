@@ -5,6 +5,7 @@ using UnityEngine;
 public class movement_gravity : MonoBehaviour
 {
     public Transform gravityTarget;
+    public Transform pivot;
     public float gravity= 9.81f;
 
     Rigidbody rb;
@@ -22,7 +23,7 @@ public class movement_gravity : MonoBehaviour
     {
         
 
-        transform.position+=-transform.right*speed*Time.deltaTime;
+        pivot.Rotate(transform.forward * speed, Space.World);
         
         if (Input.GetKey("d"))
         {
@@ -36,9 +37,10 @@ public class movement_gravity : MonoBehaviour
         }
 
     }
+    
     void FixedUpdate()
     {
-        ProcessGravity();
+        //ProcessGravity();
     }
 
 
